@@ -93,8 +93,8 @@ public class Grid : MonoBehaviour {
             }
         }
 
+        Camera.main.backgroundColor = Color.black;
         //Adjust orthographic camera view based on gridsize
-        //Camera.main.orthograpthicSize = widthToBeSeen * Screen.height / Screen.width * 0.5;
         Camera.main.orthographicSize = gridSizeX;
         Camera.main.transform.position = new Vector3(
             ((float)gridSizeX / 2.0f) - 0.5f, //-0.5 is half a grid unit for centering purposes.

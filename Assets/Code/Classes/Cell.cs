@@ -86,9 +86,22 @@ public class Cell : MonoBehaviour {
                 //todo: Debug, replace with sprites
                 var theText = new GameObject();
                 var textMesh = theText.AddComponent<TextMesh>();
+                textMesh.characterSize = 0.01f;
+                textMesh.fontSize = 512;
                 textMesh.text = neighborMines.Count.ToString();
-                textMesh.color = Color.green;
-                textMesh.characterSize = 0.3f;
+                if (neighborMines.Count == 1)
+                    textMesh.color = Color.blue;
+                else if (neighborMines.Count == 2)
+                    textMesh.color = Color.green;
+                else if (neighborMines.Count == 3)
+                    textMesh.color = Color.red;
+                else if (neighborMines.Count == 4)
+                    textMesh.color = Color.magenta;
+                else if (neighborMines.Count == 5)
+                    textMesh.color = Color.magenta;
+                else
+                    textMesh.color = Color.gray;
+                
                 textMesh.transform.position = transform.position + new Vector3(-0.15f, 0.25f, 0f);
                 //end
 
