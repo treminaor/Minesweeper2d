@@ -30,6 +30,7 @@ public class Grid : MonoBehaviour {
 
     public GameObject[,] cells;
     public int mineCounter;
+    float gameTime = 0f;
 
     Text MineCountText;
     Text GameTimerText;
@@ -128,11 +129,17 @@ public class Grid : MonoBehaviour {
         MineCountText.text = mineCounter.ToString();
         MineCountText.gameObject.SetActive(true);
 
+        GameTimerText = gameObject.transform.GetChild(1).GetChild(1).gameObject.GetComponent<Text>();
+        GameTimerText.text = "0";
+        GameTimerText.gameObject.SetActive(true);
+
         state = gameState.playing;
     }
 	
 	// Update is called once per frame
 	void Update () {
+        updateGameTime();
+
         if (Input.GetMouseButtonUp(0))
         {
             checkForEndgame();
@@ -141,6 +148,15 @@ public class Grid : MonoBehaviour {
         {
             updateMineCounterText();
         }
+    }
+
+    private void updateGameTime()
+    {
+        if (state == gameState.win || state == gameState.loss)
+            return;
+
+        gameTime += Time.deltaTime;
+        GameTimerText.text = ((int)gameTime).ToString();
     }
 
     private void updateMineCounterText()
