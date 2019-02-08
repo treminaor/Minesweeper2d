@@ -16,7 +16,7 @@ public class Grid : MonoBehaviour {
 
     public static int gridSizeX = 5;
     public static int gridSizeY = 5;
-    private static float mineChance = 0.75f;
+    private static float mineChance = 0.10f;
 
     public enum gameState
     {
