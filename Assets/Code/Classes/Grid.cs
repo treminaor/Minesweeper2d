@@ -8,9 +8,11 @@ using UnityEngine.UI;
  Todo list:
  - Settings menu to change gidsize and mine density
  - info menu to show credits
- - figure out how to adjust the size for android screens
  - export an android package and put it on my phone
-  
+ - add bomb countdown in top left
+    - placing a flag reduces bomb counter regardless of if the flag is right. bomb counter is allowed to go negative
+ - add game timer in top right
+ - revealAllMines() func should show visual indications for flagged cells if they had a mine or not. Flagged mines should stay as flags, incorrectly flagged mines should get an X over them
  */
 
 public class Grid : MonoBehaviour {
@@ -31,6 +33,9 @@ public class Grid : MonoBehaviour {
 
     public GameObject[,] cells;
     public int mineCounter;
+
+    Text MineCountText;
+    Text GameTimerText;
 
     // Use this for initialization
     void Start() {
@@ -99,7 +104,12 @@ public class Grid : MonoBehaviour {
         Camera.main.transform.position = new Vector3(
             ((float)gridSizeX / 2.0f) - 0.5f, //-0.5 is half a grid unit for centering purposes.
             ((float)gridSizeX / 2.0f) - 0.5f, 
-            Camera.main.transform.position.z); 
+            Camera.main.transform.position.z);
+
+        //Initialize UI Elements
+        MineCountText = gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Text>();
+        MineCountText.text = mineCounter.ToString();
+        MineCountText.gameObject.SetActive(true);
 
         state = gameState.playing;
     }
@@ -107,8 +117,34 @@ public class Grid : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (Input.GetMouseButtonUp(0))
+        {
             checkForEndgame();
-	}
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            updateMineCounterText();
+        }
+    }
+
+    private void updateMineCounterText()
+    {
+        if (state == gameState.win || state == gameState.loss)
+            return;
+
+        int flaggedCount = 0;
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                Cell cell = cells[x, y].GetComponent<Cell>();
+                if (cell.flagged)
+                {
+                    flaggedCount++;
+                }
+            }
+        }
+        MineCountText.text = "Unmarked Mines: " + (mineCounter - flaggedCount).ToString();
+    }
 
     private void checkForEndgame()
     {
@@ -123,6 +159,7 @@ public class Grid : MonoBehaviour {
                 Cell cell = cells[x, y].GetComponent<Cell>();
                 if(cell.hasMine && cell.clicked)
                 {
+                    revealAllMines();
                     state = gameState.loss;
                     showGameOver("You Lose!", "");
                 }
@@ -137,6 +174,21 @@ public class Grid : MonoBehaviour {
         {
             state = gameState.win;
             showGameOver("You Win!", "");
+        }
+    }
+
+    private void revealAllMines()
+    {
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                Cell cell = cells[x, y].GetComponent<Cell>();
+                if (cell.hasMine)
+                {
+                    cell.simulateMouseUp();
+                }
+            }
         }
     }
 
