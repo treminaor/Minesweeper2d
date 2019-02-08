@@ -6,11 +6,8 @@ using UnityEngine.UI;
 
 /*
  Todo list:
- - Settings menu to change gidsize and mine density
  - info menu to show credits
  - export an android package and put it on my phone
- - add bomb countdown in top left
-    - placing a flag reduces bomb counter regardless of if the flag is right. bomb counter is allowed to go negative
  - add game timer in top right
  - revealAllMines() func should show visual indications for flagged cells if they had a mine or not. Flagged mines should stay as flags, incorrectly flagged mines should get an X over them
  */
@@ -40,11 +37,31 @@ public class Grid : MonoBehaviour {
     // Use this for initialization
     void Start() {
 
-        if (GameSettings.getGridSizePref() > 0)
+        //Load & Process Game Settings
+        if (GameSettings.getPlayerPref("gridSize") > -1)
         {
-            gridSizeX = GameSettings.getGridSizePref();
-            gridSizeY = GameSettings.getGridSizePref();
+            int savedPref = GameSettings.getPlayerPref("gridSize");
+            if (savedPref == 0)
+                gridSizeX = 5;
+            else if (savedPref == 1)
+                gridSizeX = 10;
+            else
+                gridSizeX = 25;
+
+            gridSizeY = gridSizeX;
         }
+
+        if(GameSettings.getPlayerPref("mineDensity") > -1)
+        {
+            int savedPref = GameSettings.getPlayerPref("mineDensity");
+            if (savedPref == 0)
+                mineChance = 0.10f;
+            else if (savedPref == 1)
+                mineChance = 0.18f;
+            else
+                mineChance = 0.25f;
+        }
+        //Done Loading Game Settings
 
         cells = new GameObject[gridSizeX, gridSizeY];
 
@@ -66,7 +83,7 @@ public class Grid : MonoBehaviour {
                 Cell thisCell = cells[x, y].GetComponent<Cell>();
                 thisCell.x = x;
                 thisCell.y = y;
-                if (Random.value > mineChance) //todo: Does Random need to be seeded?
+                if (Random.value < mineChance) //todo: Does Random need to be seeded?
                 {
                     thisCell.hasMine = true;
                     thisCell.gameObject.name += " *";
@@ -143,7 +160,7 @@ public class Grid : MonoBehaviour {
                 }
             }
         }
-        MineCountText.text = "Unmarked Mines: " + (mineCounter - flaggedCount).ToString();
+        MineCountText.text = (mineCounter - flaggedCount).ToString();
     }
 
     private void checkForEndgame()

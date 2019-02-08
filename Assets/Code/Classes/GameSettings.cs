@@ -4,51 +4,33 @@ using UnityEngine.UI;
 
 public class GameSettings : MonoBehaviour {
 
-    public Dropdown gridDropdown;
+    public Dropdown dropdownObject;
+    public string playerPref;
 
-    public static int gridSize;
-	// Use this for initialization
-	void Start () {
-        int savedValue = getGridSizePrefValue();
-        gridDropdown.value = savedValue;
+    // Use this for initialization
+    void Start () {
+        int savedValue = getPlayerPref(playerPref);
+        dropdownObject.value = savedValue;
 
-        gridDropdown.onValueChanged.AddListener(delegate {
-            OnMyValueChange(gridDropdown);
+        dropdownObject.onValueChanged.AddListener(delegate {
+            onValueChanged(dropdownObject);
         });
     }
 
-    public void OnMyValueChange(Dropdown dd)
+    public void onValueChanged(Dropdown dd)
     {
-        if (dd.value == 0)
-            gridSize = 5;
-        else if (dd.value == 1)
-            gridSize = 10;
-        else
-            gridSize = 25;
-
-        PlayerPrefs.SetInt("gridSize", gridSize);
+        PlayerPrefs.SetInt(playerPref, dd.value);
     }
 
-    public int getGridSizePrefValue()
+    //defaultValue is -1 if value has never been saved to player preferences. Use -1 as a sanity check in any code dealing with loaded pref values.
+    public static int getPlayerPref(string pref)
     {
-        int size = PlayerPrefs.GetInt("gridSize");
-
-        if (size == 5)
-            return 0;
-        else if (size == 10)
-            return 1;
-        else
-            return 2;
-    }
-
-    public static int getGridSizePref()
-    {
-        return PlayerPrefs.GetInt("gridSize");
+        return PlayerPrefs.GetInt(pref, -1);   
     }
 
     void OnDestroy()
     {
-        gridDropdown.onValueChanged.RemoveAllListeners();
+        dropdownObject.onValueChanged.RemoveAllListeners();
     }
 
 	// Update is called once per frame
