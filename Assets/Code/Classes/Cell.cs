@@ -108,6 +108,8 @@ public class Cell : MonoBehaviour {
                 textMesh.characterSize = 0.01f;
                 textMesh.fontSize = 512;
                 textMesh.text = neighborMines.Count.ToString();
+                textMesh.offsetZ = -1;
+
                 if (neighborMines.Count == 1)
                     textMesh.color = Color.blue;
                 else if (neighborMines.Count == 2)
@@ -119,9 +121,9 @@ public class Cell : MonoBehaviour {
                 else if (neighborMines.Count == 5)
                     textMesh.color = Color.magenta;
                 else
-                    textMesh.color = Color.gray;
+                    textMesh.color = Color.black;
                 
-                textMesh.transform.position = transform.position + new Vector3(-0.15f, 0.25f, 0f);
+                textMesh.transform.position = transform.position + new Vector3(-0.15f, 0.275f, 0f);
                 //end
 
                 triggerNeighborCells();
