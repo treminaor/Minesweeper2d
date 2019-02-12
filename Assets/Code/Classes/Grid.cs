@@ -159,11 +159,11 @@ public class Grid : MonoBehaviour {
     private void handleGridZoom()
     {
         float delta = Input.GetAxis("Mouse ScrollWheel");
-        if (delta > 0f || Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
+        if (delta < 0f || Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
         {
             Camera.main.orthographicSize += 0.5f;
         }
-        else if (delta < 0f || Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus))
+        else if (delta > 0f || Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus))
         {
             Camera.main.orthographicSize -= 0.5f;
         }
