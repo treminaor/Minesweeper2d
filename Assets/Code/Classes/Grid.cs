@@ -20,6 +20,8 @@ public class Grid : MonoBehaviour {
     public static int gridSizeY = 5;
     private static float mineChance = 0.10f;
 
+    private float defaultCameraZoom;
+
     public enum gameState
     {
         win,
@@ -120,7 +122,8 @@ public class Grid : MonoBehaviour {
 
         Camera.main.backgroundColor = Color.black;
         //Adjust orthographic camera view based on gridsize
-        Camera.main.orthographicSize = gridSizeX + (gridSizeX / 2);
+        defaultCameraZoom = gridSizeX + (gridSizeX / 2);
+        Camera.main.orthographicSize = defaultCameraZoom;
         Camera.main.transform.position = new Vector3(
             ((float)gridSizeX / 2.0f) - 0.5f, //-0.5 is half a grid unit for centering purposes.
             ((float)gridSizeX / 2.0f) - 0.5f, 
@@ -142,6 +145,7 @@ public class Grid : MonoBehaviour {
 	void Update () {
         updateGameTime();
         handleTouchInput();
+        handleGridZoom();
         if (Input.GetMouseButtonUp(0))
         {
             checkForEndgame();
@@ -149,6 +153,19 @@ public class Grid : MonoBehaviour {
         if (Input.GetMouseButtonUp(1))
         {
             updateMineCounterText();
+        }
+    }
+
+    private void handleGridZoom()
+    {
+        float delta = Input.GetAxis("Mouse ScrollWheel");
+        if (delta > 0f)
+        {
+            Camera.main.orthographicSize += 0.5f;
+        }
+        else if (delta < 0f)
+        {
+            Camera.main.orthographicSize -= 0.5f;
         }
     }
 

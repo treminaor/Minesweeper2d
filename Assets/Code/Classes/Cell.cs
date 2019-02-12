@@ -12,7 +12,6 @@ public class Cell : MonoBehaviour {
         clear,
         downClick,
         drag,
-        upClick,
         cancelledClick
     }
     private mouseState state;
@@ -175,7 +174,6 @@ public class Cell : MonoBehaviour {
         {
             if (Vector3.Distance(mouseDragStartPosition, Input.mousePosition) > 3)
             {
-                Debug.Log("Click cancelled, dist: " + Vector3.Distance(mouseDragStartPosition, Input.mousePosition));
                 state = mouseState.cancelledClick;
             }
         }
