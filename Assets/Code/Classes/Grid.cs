@@ -132,6 +132,8 @@ public class Grid : MonoBehaviour {
             ((float)gridSizeX / 2.0f) - 0.5f, 
             Camera.main.transform.position.z);
 
+        GameSettings.setPlayerPrefFloat("cameraZoom", defaultCameraZoom);
+
         //Initialize UI Elements
         MineCountText = gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Text>();
         MineCountText.text = mineCounter.ToString();
@@ -164,13 +166,19 @@ public class Grid : MonoBehaviour {
         float delta = Input.GetAxis("Mouse ScrollWheel");
         if (delta < 0f || Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
         {
-            Camera.main.orthographicSize += 0.5f;
-            GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
+            if (Camera.main.orthographicSize < gridSizeX * 2)
+            {
+                Camera.main.orthographicSize += 0.5f;
+                GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
+            }
         }
         else if (delta > 0f || Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            Camera.main.orthographicSize -= 0.5f;
-            GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
+            if (Camera.main.orthographicSize > 1) //don't let them zoom the camera through to negative
+            {
+                Camera.main.orthographicSize -= 0.5f;
+                GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
+            }
         }
     }
 
