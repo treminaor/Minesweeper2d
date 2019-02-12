@@ -7,8 +7,10 @@ using UnityEngine.UI;
 /*
  Todo list:
  - info menu to show credits
- - export an android package and put it on my phone
- - add game timer in top right
+ - Android Package Issues:
+    - Grid is pushed to absolute edge of phone screen - need to add some padding
+    - Timer and Bomb Count are not completely visible (margins issue)
+    - Need to add touch/hold controls so that you can place flags where bombs are.
  - revealAllMines() func should show visual indications for flagged cells if they had a mine or not. Flagged mines should stay as flags, incorrectly flagged mines should get an X over them
  */
 
@@ -118,7 +120,7 @@ public class Grid : MonoBehaviour {
 
         Camera.main.backgroundColor = Color.black;
         //Adjust orthographic camera view based on gridsize
-        Camera.main.orthographicSize = gridSizeX;
+        Camera.main.orthographicSize = gridSizeX + (gridSizeX / 2);
         Camera.main.transform.position = new Vector3(
             ((float)gridSizeX / 2.0f) - 0.5f, //-0.5 is half a grid unit for centering purposes.
             ((float)gridSizeX / 2.0f) - 0.5f, 
@@ -139,7 +141,7 @@ public class Grid : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         updateGameTime();
-
+        handleTouchInput();
         if (Input.GetMouseButtonUp(0))
         {
             checkForEndgame();
@@ -147,6 +149,31 @@ public class Grid : MonoBehaviour {
         if (Input.GetMouseButtonUp(1))
         {
             updateMineCounterText();
+        }
+    }
+
+    private void handleTouchInput()
+    {
+        if (Input.touches.Length > 0)
+        {
+            Touch touch = Input.touches[0];
+            float touchTime = 0f;
+            if (touch.phase == TouchPhase.Began)
+            {
+                touchTime = Time.time;
+            }
+            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            {
+                if (Time.time - touchTime <= 0.5)
+                {
+                    //just a tap, already handled by unity input mapping to mouse button input
+                }
+                else
+                {
+                    //long press
+                    updateMineCounterText();
+                }
+            }
         }
     }
 

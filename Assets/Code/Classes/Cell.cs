@@ -5,6 +5,20 @@ using System.Collections.Generic;
 public class Cell : MonoBehaviour {
 
     /// <summary>
+    /// Keeps track of the mouse state to determine if the user cancelled their click by dragging off the cell
+    /// </summary>
+    public enum mouseState
+    {
+        clear,
+        downClick,
+        drag,
+        upClick,
+        cancelledClick
+    }
+    private mouseState state;
+    private Vector3 mouseDragStartPosition;
+
+    /// <summary>
     /// Has the cell been clicked by the player?
     /// </summary>
     public bool clicked = false;
@@ -41,7 +55,7 @@ public class Cell : MonoBehaviour {
 
     // Use this for initialization
 	void Start () {
-
+        state = mouseState.clear;
         transform.position = new Vector3(x, y, 0);
         Debug.Log("transform init'd to " + x + ", " + y);
         BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
@@ -76,6 +90,12 @@ public class Cell : MonoBehaviour {
         //Debug.Log("OnMouseUp() Cell [" + x + ", " + y + "]");
         if (Grid.state != Grid.gameState.playing)
             return;
+
+        if (state == mouseState.cancelledClick)
+        {
+            state = mouseState.clear;
+            return;
+        }
 
         if(!clicked && !flagged)
         {
@@ -141,6 +161,24 @@ public class Cell : MonoBehaviour {
     {
         if (Grid.state != Grid.gameState.playing)
             return;
+        state = mouseState.downClick;
+    }
+
+    private void OnMouseDrag()
+    {
+        if (state == mouseState.downClick)
+        {
+            mouseDragStartPosition = Input.mousePosition;
+            state = mouseState.drag;
+        }
+        if (state == mouseState.drag)
+        {
+            if (Vector3.Distance(mouseDragStartPosition, Input.mousePosition) > 3)
+            {
+                Debug.Log("Click cancelled, dist: " + Vector3.Distance(mouseDragStartPosition, Input.mousePosition));
+                state = mouseState.cancelledClick;
+            }
+        }
     }
 
     private void OnMouseOver()
@@ -152,8 +190,29 @@ public class Cell : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-	
-	}
+        if (Input.touches.Length > 0)
+        {
+            Touch touch = Input.touches[0];
+            float touchTime = 0f;
+            if (touch.phase == TouchPhase.Began)
+            {
+                touchTime = Time.time;
+            }
+
+            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            {
+                if (Time.time - touchTime <= 0.5)
+                {
+                    //just a tap
+                }
+                else
+                {
+                    //long press
+                    OnMouseUpRight();
+                }
+            }
+        }
+    }
 
     private void triggerNeighborCells()
     {
