@@ -123,7 +123,10 @@ public class Grid : MonoBehaviour {
         Camera.main.backgroundColor = Color.black;
         //Adjust orthographic camera view based on gridsize
         defaultCameraZoom = gridSizeX + (gridSizeX / 2);
-        Camera.main.orthographicSize = defaultCameraZoom;
+        if (GameSettings.getPlayerPrefFloat("cameraZoom") >= 0)
+            Camera.main.orthographicSize = GameSettings.getPlayerPrefFloat("cameraZoom");
+        else
+            Camera.main.orthographicSize = defaultCameraZoom;
         Camera.main.transform.position = new Vector3(
             ((float)gridSizeX / 2.0f) - 0.5f, //-0.5 is half a grid unit for centering purposes.
             ((float)gridSizeX / 2.0f) - 0.5f, 
@@ -162,10 +165,12 @@ public class Grid : MonoBehaviour {
         if (delta < 0f || Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
         {
             Camera.main.orthographicSize += 0.5f;
+            GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
         }
         else if (delta > 0f || Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus))
         {
             Camera.main.orthographicSize -= 0.5f;
+            GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
         }
     }
 

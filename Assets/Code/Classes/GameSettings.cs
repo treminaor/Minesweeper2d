@@ -28,6 +28,16 @@ public class GameSettings : MonoBehaviour {
         return PlayerPrefs.GetInt(pref, -1);   
     }
 
+    public static float getPlayerPrefFloat(string pref)
+    {
+        return PlayerPrefs.GetFloat(pref, -1);
+    }
+
+    public static void setPlayerPrefFloat(string pref, float value)
+    {
+        PlayerPrefs.SetFloat(pref, value);
+    }
+
     void OnDestroy()
     {
         dropdownObject.onValueChanged.RemoveAllListeners();
