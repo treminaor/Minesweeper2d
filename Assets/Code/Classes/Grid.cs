@@ -151,6 +151,7 @@ public class Grid : MonoBehaviour {
         updateGameTime();
         handleTouchInput();
         handleGridZoom();
+
         if(Input.GetKeyDown(KeyCode.Escape))
             SceneManager.LoadScene("MainMenu");
 
@@ -212,7 +213,7 @@ public class Grid : MonoBehaviour {
 
     private void updateGameTime()
     {
-        if (state == gameState.win || state == gameState.loss)
+        if (state == gameState.win || state == gameState.loss || state == gameState.newgame)
             return;
 
         gameTime += Time.deltaTime;
