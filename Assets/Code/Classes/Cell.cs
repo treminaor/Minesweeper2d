@@ -106,7 +106,7 @@ public class Cell : MonoBehaviour {
                 else if (neighborMines.Count == 4)
                     textMesh.color = Color.magenta;
                 else if (neighborMines.Count == 5)
-                    textMesh.color = Color.magenta;
+                    textMesh.color = Color.cyan;
                 else
                     textMesh.color = Color.black;
                 

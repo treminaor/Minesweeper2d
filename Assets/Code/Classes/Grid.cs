@@ -151,6 +151,9 @@ public class Grid : MonoBehaviour {
         updateGameTime();
         handleTouchInput();
         handleGridZoom();
+        if(Input.GetKeyDown(KeyCode.Escape))
+            SceneManager.LoadScene("MainMenu");
+
         if (Input.GetMouseButtonUp(0))
         {
             checkForEndgame();
