@@ -102,8 +102,8 @@ public class Grid : MonoBehaviour {
         {
             for(int k = 0; k < minimumMineCount - mineCounter; k++)
             {
-                int x = Random.RandomRange(1, gridSizeX);
-                int y = Random.RandomRange(1, gridSizeY);
+                int x = Random.Range(1, gridSizeX);
+                int y = Random.Range(1, gridSizeY);
                 cells[x, y].GetComponent<Cell>().hasMine = true;
                 cells[x, y].gameObject.name += " *";
                 mineCounter++;
@@ -132,7 +132,7 @@ public class Grid : MonoBehaviour {
             ((float)gridSizeX / 2.0f) - 0.5f, 
             Camera.main.transform.position.z);
 
-        GameSettings.setPlayerPrefFloat("cameraZoom", defaultCameraZoom);
+        GameSettings.setPlayerPrefFloat("cameraZoom", Camera.main.orthographicSize);
 
         //Initialize UI Elements
         MineCountText = gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Text>();

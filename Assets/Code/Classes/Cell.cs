@@ -44,8 +44,6 @@ public class Cell : MonoBehaviour {
 
     //public static Color[] textColors = new Color[Color.black, Color.blue, Color.green, Color.cyan, Color.orange, Color.purple, Color.pink, Color.yellow];
 
-    private GameObject debugText;
-
     /// <summary>
     /// The Sprite object which primarily occupies this cell.
     /// </summary>
@@ -62,21 +60,10 @@ public class Cell : MonoBehaviour {
         SpriteRenderer spriteCellBG = gameObject.AddComponent<SpriteRenderer>();
         spriteCellBG.sprite = Resources.Load<Sprite>("cell_bg");
 
-        cellLayer1 = new GameObject();
+        cellLayer1 = new GameObject("Sprite Layer for Cell [" + x + ", " + y + "]");
         cellLayer1.transform.position = transform.position;
         cellSprite = cellLayer1.AddComponent<SpriteRenderer>();
-        
-        //todo: debug text
-        debugText = new GameObject();
-        debugText.AddComponent<TextMesh>();
-        /*
-           var theText = new GameObject();
-           var textMesh = theText.AddComponent<TextMesh>();
-           textMesh.text = "" + x + "," + y + "";
-           textMesh.color = Color.white;
-           textMesh.characterSize = 0.16f;
-           textMesh.transform.position = transform.position + new Vector3(-0.35f, 0.25f, -0.15f);
-        */
+        cellSprite.sortingOrder = 1;
     }
 
     public void simulateMouseUp()
@@ -103,7 +90,7 @@ public class Cell : MonoBehaviour {
             if(!hasMine)
             {
                 //todo: Debug, replace with sprites
-                var theText = new GameObject();
+                var theText = new GameObject("TextMesh for Cell [" + x + ", " + y + "]");
                 var textMesh = theText.AddComponent<TextMesh>();
                 textMesh.characterSize = 0.01f;
                 textMesh.fontSize = 512;
@@ -139,10 +126,6 @@ public class Cell : MonoBehaviour {
     {
         if (Grid.state != Grid.gameState.playing)
             return;
-
-        //todo: Debug, replace with sprites
-        TextMesh textMesh = debugText.GetComponent<TextMesh>();
-        textMesh.transform.position = transform.position;
 
         if (!flagged)
         {
