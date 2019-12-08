@@ -42,6 +42,11 @@ public class Cell : MonoBehaviour {
     /// </summary>
     public List<Vector2> neighborMines;
 
+    /// <summary>
+    /// Used to track how long a touch has lasted
+    /// </summary>
+    float touchTime = 0f;
+
     //public static Color[] textColors = new Color[Color.black, Color.blue, Color.green, Color.cyan, Color.orange, Color.purple, Color.pink, Color.yellow];
 
     /// <summary>
@@ -68,16 +73,25 @@ public class Cell : MonoBehaviour {
 
     public void simulateMouseUp()
     {
-        OnMouseUp();
+        OnMouseUp(true);
     }
-
     private void OnMouseUp()
     {
-        //Debug.Log("OnMouseUp() Cell [" + x + ", " + y + "]");
+        OnMouseUp(false);
+    }
+    private void OnMouseUp(bool sim)
+    {
+        //Debug.Log("OnMouseUp() " + sim + ", Cell [" + x + ", " + y + "]");
         if (Grid.state != Grid.gameState.playing)
             return;
 
-        if (state == mouseState.cancelledClick)
+        if((Time.time - touchTime) > Grid.longPressTime)
+        {
+            OnMouseUpRight();
+            touchTime = 0f;
+            return;
+        }
+        else if (state == mouseState.cancelledClick)
         {
             state = mouseState.clear;
             return;
@@ -124,17 +138,15 @@ public class Cell : MonoBehaviour {
 
     private void OnMouseUpRight()
     {
+        //Debug.Log("OnMouseUpRight() Cell [" + x + ", " + y + "]");
         if (Grid.state != Grid.gameState.playing)
             return;
 
-        if (!flagged)
-        {
+        if (!flagged) {
             flagged = true;
 
             cellSprite.sprite = Resources.Load<Sprite>("flag");
-        }
-        else
-        {
+        } else {
             flagged = false;
 
             cellSprite.sprite = null;
@@ -146,6 +158,8 @@ public class Cell : MonoBehaviour {
         if (Grid.state != Grid.gameState.playing)
             return;
         state = mouseState.downClick;
+
+        //Debug.Log("OnMouseDown() for Cell [" + x + ", " + y + "]");
     }
 
     private void OnMouseDrag()
@@ -168,15 +182,19 @@ public class Cell : MonoBehaviour {
     {
         if (Input.GetMouseButtonUp(1))
         {
+            Debug.Log("OnMouseOver() GetMouseButtonUp(1)");
             OnMouseUpRight();
         }
     }
+    
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
         if (Input.touches.Length > 0)
         {
             Touch touch = Input.touches[0];
-            float touchTime = 0f;
+            //Debug.Log("<touch> for Cell [" + x + ", " + y + "] Phase: " + touch.phase);
+
             if (touch.phase == TouchPhase.Began)
             {
                 touchTime = Time.time;
@@ -184,17 +202,20 @@ public class Cell : MonoBehaviour {
 
             if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
             {
-                if (Time.time - touchTime <= 0.5)
+                if (Time.time - touchTime <= Grid.longPressTime)
                 {
                     //just a tap
                 }
                 else
                 {
                     //long press
-                    OnMouseUpRight();
+                    //Debug.Log("long press OnMouseUpRight()");
                 }
+                //touchTime = 0f;
             }
         }
+        else
+            touchTime = 0f;
     }
 
     private void triggerNeighborCells()

@@ -35,6 +35,8 @@ public class Grid : MonoBehaviour {
     public GameObject[,] cells;
     public int mineCounter;
     float gameTime = 0f;
+    float touchTime = 0f;
+    public static float longPressTime = 0.33333f;
 
     Text MineCountText;
     Text GameTimerText;
@@ -149,24 +151,25 @@ public class Grid : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         updateGameTime();
-        handleTouchInput();
+        handleButtonInput();
+        //handleTouchInput();
         handleGridZoom();
+    }
 
-        if(Input.GetKeyDown(KeyCode.Escape))
+    private void handleButtonInput() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
             SceneManager.LoadScene("MainMenu");
+        }
 
-        if (Input.GetMouseButtonUp(0))
-        {
+        if (Input.GetMouseButtonUp(0)) {
             checkForEndgame();
         }
-        if (Input.GetMouseButtonUp(1))
-        {
+        if (Input.GetMouseButtonUp(1)) {
             updateMineCounterText();
         }
     }
 
-    private void handleGridZoom()
-    {
+    private void handleGridZoom() {
         float delta = Input.GetAxis("Mouse ScrollWheel");
         if (delta < 0f || Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
         {
@@ -186,33 +189,31 @@ public class Grid : MonoBehaviour {
         }
     }
 
-    private void handleTouchInput()
-    {
-        if (Input.touches.Length > 0)
-        {
+    private void handleTouchInput() {
+        if (Input.touches.Length > 0) {
             Touch touch = Input.touches[0];
-            float touchTime = 0f;
-            if (touch.phase == TouchPhase.Began)
-            {
+            //Debug.Log("<touch> initiated: " + touch.phase);
+            
+            if (touch.phase == TouchPhase.Began) {
                 touchTime = Time.time;
+                //Debug.Log("<touch> touchTime " + touchTime);
             }
-            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-            {
-                if (Time.time - touchTime <= 0.5)
-                {
+            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) {
+                //Debug.Log("<touch> ended(" + touch.phase + ") Time.time:" + Time.time + ", touchTime: " + touchTime + ", minus: " + (Time.time - touchTime));
+                if (Time.time - touchTime <= longPressTime) {
                     //just a tap, already handled by unity input mapping to mouse button input
-                }
-                else
-                {
+                    //Debug.Log("<touch> short press");
+                } else {
                     //long press
+                    //Debug.Log("<touch> long press");
                     updateMineCounterText();
                 }
+                touchTime = 0f;
             }
         }
     }
 
-    private void updateGameTime()
-    {
+    private void updateGameTime() {
         if (state == gameState.win || state == gameState.loss || state == gameState.newgame)
             return;
 
@@ -273,6 +274,7 @@ public class Grid : MonoBehaviour {
 
     private void revealAllMines()
     {
+        Debug.Log("revealAllMines()");
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
